@@ -1,14 +1,24 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { SparklesCore } from "@/components/ui/sparkles";
 import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Terminal } from "lucide-react";
 import Link from "next/link";
+import { useTheme } from "next-themes";
 
 export function Hero() {
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
   return (
-    <div className="min-h-screen w-full bg-black flex flex-col items-center justify-center overflow-hidden rounded-md relative">
+    <div className="min-h-screen w-full bg-background flex flex-col items-center justify-center overflow-hidden rounded-md relative">
       <div className="w-full absolute inset-0 h-full">
         <SparklesCore
           id="tsparticlesfullpage"
@@ -17,24 +27,24 @@ export function Hero() {
           maxSize={1.4}
           particleDensity={100}
           className="w-full h-full"
-          particleColor="#FFFFFF"
+          particleColor={resolvedTheme === "dark" ? "#FFFFFF" : "#000000"}
         />
       </div>
       
       <div className="relative z-20 text-center px-4 max-w-4xl mx-auto space-y-8">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 text-xs font-medium mb-4 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted border border-border text-muted-foreground text-xs font-medium mb-4 animate-in fade-in slide-in-from-bottom-4 duration-1000">
            <Terminal className="w-3 h-3" />
            <span>Engineer-first Open Source</span>
         </div>
         
-        <h1 className="md:text-7xl text-3xl lg:text-8xl font-bold text-center text-white relative z-20 tracking-tight">
+        <h1 className="md:text-7xl text-3xl lg:text-8xl font-bold text-center text-foreground relative z-20 tracking-tight">
           OpenSyntaxHQ
         </h1>
         
-        <div className="text-zinc-400 md:text-xl text-base max-w-2xl mx-auto relative z-20">
+        <div className="text-muted-foreground md:text-xl text-base max-w-2xl mx-auto relative z-20">
              <TextGenerateEffect 
                 words="Building practical, well-documented tools and reference implementations that make software systems easier to design, ship, and maintain."
-                className="text-zinc-400 font-normal"
+                className="text-muted-foreground font-normal"
              />
         </div>
 
@@ -45,7 +55,7 @@ export function Hero() {
             </Button>
           </Link>
           <Link href="/mission">
-            <Button variant="outline" size="lg" className="rounded-full px-8 h-12 text-base font-medium bg-transparent border-zinc-700 text-zinc-300 hover:bg-zinc-900 hover:text-white">
+            <Button variant="outline" size="lg" className="rounded-full px-8 h-12 text-base font-medium bg-transparent border-border text-muted-foreground hover:bg-muted hover:text-foreground">
               How to start <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
           </Link>

@@ -56,13 +56,13 @@ export function Principles() {
           {content.map((item, index) => (
             <div 
               key={index} 
-              className="group relative p-8 rounded-2xl bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer"
+              className="group relative p-8 rounded-2xl bg-card border border-border hover:border-sidebar-primary transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer"
             >
-              <div className="mb-6 p-4 rounded-full bg-zinc-950/50 w-fit border border-zinc-800/50 group-hover:border-zinc-700/50 transition-colors">
+              <div className="mb-6 p-4 rounded-full bg-muted w-fit border border-border group-hover:border-primary/50 transition-colors">
                 {item.icon}
               </div>
-              <h3 className="text-xl font-bold mb-3 text-zinc-100">{item.title}</h3>
-              <p className="text-zinc-400 leading-relaxed">
+              <h3 className="text-xl font-bold mb-3 text-card-foreground">{item.title}</h3>
+              <p className="text-muted-foreground leading-relaxed">
                 {item.description}
               </p>
             </div>
