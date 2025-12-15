@@ -112,7 +112,7 @@ export function Navbar() {
                         </Link>
                     ))}
                     <div className="h-px bg-border my-2" />
-                    <div className="flex items-center gap-4 pt-2">
+                    <div className="relative w-full nav-container">
                         <Link href="https://github.com/OpenSyntaxHQ" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
                             <GithubIcon className="h-5 w-5" />
                             <span>GitHub</span>

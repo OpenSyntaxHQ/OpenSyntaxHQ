@@ -3,7 +3,7 @@ import { GithubIcon } from "@/components/icons/GithubIcon";
 
 export function Footer() {
   return (
-    <footer className="py-6 bg-background border-t border-border">
+    <footer className="w-full pt-20 pb-10" id="contact">
       <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
         <div className="text-center md:text-left">
           <span className="font-bold text-lg">OpenSyntaxHQ</span>

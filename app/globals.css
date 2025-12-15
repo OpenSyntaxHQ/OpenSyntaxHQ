@@ -184,15 +184,22 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
     letter-spacing: var(--tracking-normal);
   }
+
+  #entropy-container {
+    transform: rotate(var(--entropy-rot, 0deg)) translate(var(--entropy-x, 0px), var(--entropy-y, 0px));
+    filter: blur(var(--entropy-blur, 0px));
+    transition: transform 0.5s ease-out, filter 0.5s ease-out;
+    will-change: transform, filter;
+  }
 }
 
-/* Blueprint Mode Styles */
+
 .blueprint-mode {
   --blueprint-bg: #0a0a0f;
   --blueprint-grid: #1a1a2e;
@@ -233,7 +240,12 @@
 .blueprint-mode p,
 .blueprint-mode span,
 .blueprint-mode a,
-.blueprint-mode button {
+.blueprint-mode button,
+.blueprint-mode li,
+.blueprint-mode blockquote,
+.blueprint-mode th,
+.blueprint-mode td,
+.blueprint-mode strong {
   border: 1px dashed rgba(0, 240, 255, 0.1);
 }
 
@@ -243,7 +255,8 @@
   opacity: 0.7;
 }
 
-/* Add labels to semantic elements */
+
+
 .blueprint-mode header::before { content: "HEADER"; position: absolute; top: 0; left: 0; font-size: 8px; background: var(--blueprint-bg) !important; padding: 2px; }
 .blueprint-mode footer::before { content: "FOOTER"; position: absolute; top: 0; left: 0; font-size: 8px; background: var(--blueprint-bg) !important; padding: 2px; }
 .blueprint-mode section::before { content: "SECTION"; position: absolute; top: 0; left: 0; font-size: 8px; background: var(--blueprint-bg) !important; padding: 2px; }

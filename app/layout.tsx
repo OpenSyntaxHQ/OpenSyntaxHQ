@@ -7,6 +7,7 @@ import { Footer } from "@/components/Footer";
 import { BlueprintProvider } from "@/components/blueprint-context";
 import { NeuralTerminal } from "@/components/NeuralTerminal";
 
+
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
@@ -31,22 +32,22 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased bg-background text-foreground`}
+        className={`${inter.className} antialiased`}
         suppressHydrationWarning
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
+          defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
           <BlueprintProvider>
-            <div className="relative flex min-h-screen flex-col pb-10">
+            <div id="entropy-container" className="relative min-h-screen flex flex-col pb-10">
                <Navbar />
-               <main className="flex-1">{children}</main>
+               <main className="flex-1 w-full">{children}</main>
                <Footer />
-               <NeuralTerminal />
             </div>
+            <NeuralTerminal />
           </BlueprintProvider>
         </ThemeProvider>
       </body>

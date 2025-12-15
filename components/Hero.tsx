@@ -12,13 +12,16 @@ export function Hero() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    const timer = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timer);
   }, []);
 
   if (!mounted) return null;
 
   return (
-    <div className="min-h-screen w-full bg-background flex flex-col items-center justify-center overflow-hidden rounded-md relative">
+    <div
+      className="pb-20 pt-36 min-h-screen w-full bg-background dark:bg-grid-white/[0.03] bg-grid-black/[0.2] relative flex items-center justify-center overflow-hidden rounded-md"
+    >
       <div className="w-full absolute inset-0 h-full">
         <SparklesCore
           id="tsparticlesfullpage"
@@ -38,7 +41,7 @@ export function Hero() {
         </div>
         
         <h1 className="md:text-7xl text-3xl lg:text-8xl font-bold text-center text-foreground relative z-20 tracking-tight">
-          OpenSyntaxHQ
+          OpenSyntax<span className="text-primary">HQ</span>
         </h1>
         
         <div className="text-muted-foreground md:text-xl text-base max-w-2xl mx-auto relative z-20">

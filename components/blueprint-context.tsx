@@ -6,8 +6,10 @@ interface BlueprintContextType {
   isBlueprintMode: boolean;
   toggleBlueprintMode: () => void;
   logs: string[];
-  addLog: (log: string) => void;
+  addLog: (message: string) => void;
   clearLogs: () => void;
+  entropy: number;
+  fixEntropy: () => void;
 }
 
 const BlueprintContext = createContext<BlueprintContextType | undefined>(
@@ -17,6 +19,7 @@ const BlueprintContext = createContext<BlueprintContextType | undefined>(
 export function BlueprintProvider({ children }: { children: React.ReactNode }) {
   const [isBlueprintMode, setIsBlueprintMode] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
+  const [entropy, setEntropy] = useState(0);
 
   const addLog = useCallback((log: string) => {
     const timestamp = new Date().toLocaleTimeString([], {
@@ -31,38 +34,79 @@ export function BlueprintProvider({ children }: { children: React.ReactNode }) {
   const clearLogs = useCallback(() => setLogs([]), []);
 
   const toggleBlueprintMode = useCallback(() => {
-    setIsBlueprintMode((prev) => {
-      const newVal = !prev;
-      return newVal;
-    });
+    setIsBlueprintMode((prev) => !prev);
   }, []);
 
-  // Effect to log mode changes
-  useEffect(() => {
-    // Timeout prevents set-state-in-effect warning
-    const timer = setTimeout(() => {
-        addLog(`System state changed: Blueprint Mode ${isBlueprintMode ? "ENABLED" : "DISABLED"}`);
-    }, 0);
-    return () => clearTimeout(timer);
-  }, [isBlueprintMode, addLog]);
-
-  // Log initialization
-  useEffect(() => {
-     const timer = setTimeout(() => {
-        addLog("OpenSyntaxHQ System Initialized...");
-        addLog("Loading modules... [OK]");
-     }, 100);
-     return () => clearTimeout(timer);
+  const fixEntropy = useCallback(() => {
+    setEntropy(0);
+    addLog("System entropy reset. Codebase refactored.");
+    document.documentElement.style.setProperty("--entropy-rot", "0deg");
+    document.documentElement.style.setProperty("--entropy-x", "0px");
+    document.documentElement.style.setProperty("--entropy-y", "0px");
+    document.documentElement.style.setProperty("--entropy-blur", "0px");
   }, [addLog]);
 
-  // Toggle body class
+  useEffect(() => {
+    if (entropy > 0) {
+      const rot = (Math.random() - 0.5) * (entropy / 50); 
+      const x = (Math.random() - 0.5) * (entropy / 5);   
+      const y = (Math.random() - 0.5) * (entropy / 5);
+      const blur = entropy > 50 ? (entropy - 50) / 100 : 0; 
+
+      document.documentElement.style.setProperty("--entropy-rot", `${rot}deg`);
+      document.documentElement.style.setProperty("--entropy-x", `${x}px`);
+      document.documentElement.style.setProperty("--entropy-y", `${y}px`);
+      document.documentElement.style.setProperty("--entropy-blur", `${blur}px`);
+    } else {
+      document.documentElement.style.setProperty("--entropy-rot", "0deg");
+      document.documentElement.style.setProperty("--entropy-x", "0px");
+      document.documentElement.style.setProperty("--entropy-y", "0px");
+      document.documentElement.style.setProperty("--entropy-blur", "0px");
+    }
+  }, [entropy]);
+
+
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setEntropy((prev) => {
+        const next = Math.min(prev + 1, 100);
+        return next;
+      });
+    }, 5000); 
+
+    return () => clearInterval(interval);
+  }, []);
+
+
+
+  useEffect(() => {
+    if (entropy > 0 && entropy % 10 === 0) {
+      const timer = setTimeout(() => {
+        addLog(`[SYSTEM] Entropy Critical: ${entropy}% visual degradation imminent.`);
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [entropy, addLog]);
+
+
+
+  useEffect(() => {
+    setTimeout(() => {
+      addLog("OpenSyntaxHQ System Initialized...");
+      addLog("Loading modules... [OK]");
+    }, 500);
+  }, []); 
+
   useEffect(() => {
     if (isBlueprintMode) {
       document.body.classList.add("blueprint-mode");
+      setTimeout(() => addLog("System state changed: Blueprint Mode ENABLED"), 0);
     } else {
       document.body.classList.remove("blueprint-mode");
+      setTimeout(() => addLog("System state changed: Blueprint Mode DISABLED"), 0);
     }
-  }, [isBlueprintMode]);
+  }, [isBlueprintMode, addLog]);
 
   return (
     <BlueprintContext.Provider
@@ -72,6 +116,8 @@ export function BlueprintProvider({ children }: { children: React.ReactNode }) {
         logs,
         addLog,
         clearLogs,
+        entropy,
+        fixEntropy,
       }}
     >
       {children}

@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 export function NeuralTerminal() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
-  const { logs, addLog, clearLogs, toggleBlueprintMode, isBlueprintMode } =
+  const { logs, addLog, clearLogs, toggleBlueprintMode, isBlueprintMode, entropy, fixEntropy } =
     useBlueprint();
   const logsContainerRef = useRef<HTMLDivElement>(null);
   const { setTheme, resolvedTheme } = useTheme();
@@ -49,6 +49,8 @@ export function NeuralTerminal() {
       case "help":
         addLog("Available commands:");
         addLog("  blueprint - Toggle site blueprint mode");
+        addLog("  status    - Show system entropy levels");
+        addLog("  refactor  - Fix visual entropy (System Reset)");
         addLog("  clear     - Clear terminal logs");
         addLog("  theme     - Toggle light/dark theme");
         addLog("  repo      - Open GitHub repository");
@@ -67,6 +69,17 @@ export function NeuralTerminal() {
         window.open("https://github.com/OpenSyntaxHQ", "_blank");
         addLog("Opening GitHub...");
         break;
+      case "refactor":
+      case "fix":
+      case "lint":
+        fixEntropy();
+        break;
+      case "status":
+        addLog(`System Status:`);
+        addLog(`  Entropy: ${entropy}%`);
+        addLog(`  Blueprint: ${isBlueprintMode ? "ACTIVE" : "INACTIVE"}`);
+        addLog(`  Theme: ${resolvedTheme}`);
+        break;
       default:
         addLog(`Unknown command: ${cmd}. Type 'help' for options.`);
     }
@@ -78,9 +91,14 @@ export function NeuralTerminal() {
         "fixed bottom-0 left-0 w-full z-50 font-mono text-sm transition-all duration-300",
         isOpen ? "h-64" : "h-10"
       )}
+      style={{
+        transform: `rotate(var(--entropy-rot, 0deg)) translate(var(--entropy-x, 0px), 0px)`,
+        filter: `blur(var(--entropy-blur, 0px))`,
+        transformOrigin: "bottom center",
+        willChange: "transform, filter",
+      }}
     >
       <div className="absolute inset-0 bg-black/80 backdrop-blur-md border-t border-white/10 shadow-2xl flex flex-col">
-        {/* Header */}
         <div
           className="flex items-center justify-between px-4 h-10 bg-black/40 border-b border-white/5 cursor-pointer hover:bg-white/5 transition-colors"
           onClick={() => setIsOpen(!isOpen)}
@@ -97,7 +115,6 @@ export function NeuralTerminal() {
           </div>
         </div>
 
-        {/* Content */}
         <AnimatePresence>
           {isOpen && (
             <motion.div
@@ -106,7 +123,6 @@ export function NeuralTerminal() {
               exit={{ opacity: 0 }}
               className="flex-1 flex flex-col p-4 overflow-hidden"
             >
-              {/* Logs Area */}
               <div 
                 ref={logsContainerRef}
                 className="flex-1 overflow-y-auto space-y-1 mb-2 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent pr-2"
@@ -119,7 +135,6 @@ export function NeuralTerminal() {
                 ))}
               </div>
 
-              {/* Input Area */}
               <form onSubmit={handleCommand} className="flex items-center gap-2 border-t border-white/5 pt-2">
                 <span className="text-green-500 animate-pulse">$</span>
                 <input
