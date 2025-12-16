@@ -70,8 +70,6 @@ export function NeuralTerminal() {
         addLog("Opening GitHub...");
         break;
       case "refactor":
-      case "fix":
-      case "lint":
         fixEntropy();
         break;
       case "status":

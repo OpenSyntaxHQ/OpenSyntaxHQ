@@ -48,10 +48,10 @@ export function BlueprintProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (entropy > 0) {
-      const rot = (Math.random() - 0.5) * (entropy / 50); 
-      const x = (Math.random() - 0.5) * (entropy / 5);   
-      const y = (Math.random() - 0.5) * (entropy / 5);
-      const blur = entropy > 50 ? (entropy - 50) / 100 : 0; 
+      const rot = (Math.random() - 0.5) * (entropy / 20); 
+      const x = (Math.random() - 0.5) * (entropy / 2);   
+      const y = (Math.random() - 0.5) * (entropy / 2);
+      const blur = entropy > 50 ? (entropy - 50) / 35 : 0; 
 
       document.documentElement.style.setProperty("--entropy-rot", `${rot}deg`);
       document.documentElement.style.setProperty("--entropy-x", `${x}px`);
