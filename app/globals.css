@@ -199,6 +199,346 @@
   }
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   COSMIC ANIMATION SYSTEM
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Cosmic Hero Container */
+.cosmic-hero {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: var(--background);
+}
+
+.dark .cosmic-hero {
+  background: radial-gradient(ellipse at 50% 0%, rgba(5, 150, 105, 0.08) 0%, transparent 50%),
+              radial-gradient(ellipse at 80% 50%, rgba(13, 148, 136, 0.05) 0%, transparent 40%),
+              radial-gradient(ellipse at 20% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 40%),
+              var(--background);
+}
+
+/* Nebula Background */
+.nebula-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.nebula-layer {
+  position: absolute;
+  inset: -50%;
+  background: 
+    radial-gradient(ellipse at 30% 20%, rgba(16, 185, 129, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 60%, rgba(20, 184, 166, 0.05) 0%, transparent 45%),
+    radial-gradient(ellipse at 50% 80%, rgba(34, 197, 94, 0.04) 0%, transparent 40%);
+  animation: nebula-drift 30s ease-in-out infinite;
+  will-change: transform;
+}
+
+.nebula-layer:nth-child(2) {
+  animation-delay: -10s;
+  animation-duration: 35s;
+  background: 
+    radial-gradient(ellipse at 60% 30%, rgba(5, 150, 105, 0.05) 0%, transparent 45%),
+    radial-gradient(ellipse at 30% 70%, rgba(13, 148, 136, 0.05) 0%, transparent 50%);
+}
+
+.nebula-layer:nth-child(3) {
+  animation-delay: -20s;
+  animation-duration: 40s;
+  background: 
+    radial-gradient(ellipse at 80% 50%, rgba(52, 211, 153, 0.04) 0%, transparent 40%),
+    radial-gradient(ellipse at 20% 40%, rgba(45, 212, 191, 0.04) 0%, transparent 45%);
+}
+
+@keyframes nebula-drift {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translate(5%, -3%) rotate(2deg) scale(1.05);
+  }
+  50% {
+    transform: translate(-3%, 5%) rotate(-1deg) scale(1.02);
+  }
+  75% {
+    transform: translate(-5%, -2%) rotate(1deg) scale(1.03);
+  }
+}
+
+/* Floating Orbs */
+.floating-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform;
+  filter: blur(0.5px);
+}
+
+.floating-orb::before {
+  content: '';
+  position: absolute;
+  inset: -20%;
+  border-radius: 50%;
+  background: inherit;
+  filter: blur(20px);
+  opacity: 0.6;
+}
+
+.floating-orb::after {
+  content: '';
+  position: absolute;
+  inset: 15%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  filter: blur(8px);
+}
+
+.orb-1 {
+  --orb-size: 80px;
+  width: var(--orb-size);
+  height: var(--orb-size);
+  background: linear-gradient(135deg, #10b981 0%, #34d399 50%, #6ee7b7 100%);
+  top: 15%;
+  left: 10%;
+  animation: orb-float-1 8s ease-in-out infinite;
+}
+
+.orb-2 {
+  --orb-size: 60px;
+  width: var(--orb-size);
+  height: var(--orb-size);
+  background: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
+  top: 25%;
+  right: 15%;
+  animation: orb-float-2 10s ease-in-out infinite;
+}
+
+.orb-3 {
+  --orb-size: 100px;
+  width: var(--orb-size);
+  height: var(--orb-size);
+  background: linear-gradient(135deg, #14b8a6 0%, #2dd4bf 50%, #5eead4 100%);
+  bottom: 30%;
+  left: 20%;
+  animation: orb-float-3 12s ease-in-out infinite;
+}
+
+.orb-4 {
+  --orb-size: 50px;
+  width: var(--orb-size);
+  height: var(--orb-size);
+  background: linear-gradient(135deg, #22c55e 0%, #4ade80 50%, #86efac 100%);
+  top: 60%;
+  right: 10%;
+  animation: orb-float-4 9s ease-in-out infinite;
+}
+
+.orb-5 {
+  --orb-size: 70px;
+  width: var(--orb-size);
+  height: var(--orb-size);
+  background: linear-gradient(135deg, #0d9488 0%, #14b8a6 50%, #2dd4bf 100%);
+  bottom: 15%;
+  right: 25%;
+  animation: orb-float-5 11s ease-in-out infinite;
+}
+
+.orb-6 {
+  --orb-size: 45px;
+  width: var(--orb-size);
+  height: var(--orb-size);
+  background: linear-gradient(135deg, #047857 0%, #059669 50%, #10b981 100%);
+  top: 40%;
+  left: 5%;
+  animation: orb-float-6 7s ease-in-out infinite;
+}
+
+@keyframes orb-float-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(30px, -40px) scale(1.1); }
+}
+
+@keyframes orb-float-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-25px, 35px) scale(0.95); }
+}
+
+@keyframes orb-float-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(40px, 20px) scale(1.08); }
+}
+
+@keyframes orb-float-4 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-35px, -30px) scale(1.05); }
+}
+
+@keyframes orb-float-5 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(20px, 40px) scale(0.92); }
+}
+
+@keyframes orb-float-6 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(25px, -25px) scale(1.15); }
+}
+
+/* Reality Shatter Fragments */
+.shatter-container {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  perspective: 1000px;
+}
+
+.shatter-fragment {
+  position: absolute;
+  background: var(--background);
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+.dark .shatter-fragment {
+  background: linear-gradient(135deg, #0d0f0e 0%, #0a0d0c 100%);
+  box-shadow: inset 0 0 20px rgba(16, 185, 129, 0.05);
+}
+
+/* Glitch Text Effect */
+.glitch-text {
+  position: relative;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.glitch-text::before {
+  color: #2dd4bf;
+  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+  transform: translateX(-2px);
+  animation: glitch-top 3s ease-in-out infinite;
+}
+
+.glitch-text::after {
+  color: #059669;
+  clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+  transform: translateX(2px);
+  animation: glitch-bottom 3s ease-in-out infinite;
+}
+
+.glitch-text:hover::before,
+.glitch-text:hover::after {
+  opacity: 0.8;
+}
+
+@keyframes glitch-top {
+  0%, 100% { transform: translateX(-2px); opacity: 0; }
+  2%, 4% { transform: translateX(2px); opacity: 0.8; }
+  4%, 6% { transform: translateX(-2px); opacity: 0.8; }
+  6%, 100% { opacity: 0; }
+}
+
+@keyframes glitch-bottom {
+  0%, 100% { transform: translateX(2px); opacity: 0; }
+  3%, 5% { transform: translateX(-3px); opacity: 0.8; }
+  5%, 7% { transform: translateX(3px); opacity: 0.8; }
+  7%, 100% { opacity: 0; }
+}
+
+/* Magnetic Button */
+.magnetic-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  will-change: transform;
+  transition: box-shadow 0.3s ease;
+}
+
+.magnetic-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+              rgba(255, 255, 255, 0.2) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.magnetic-btn:hover::before {
+  opacity: 1;
+}
+
+.magnetic-btn:hover {
+  box-shadow: 0 10px 40px -10px currentColor;
+}
+
+/* Cosmic Glow */
+.cosmic-glow {
+  position: relative;
+}
+
+.cosmic-glow::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(45deg, #10b981, #14b8a6, #22c55e, #059669);
+  background-size: 400% 400%;
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  filter: blur(15px);
+  transition: opacity 0.4s ease;
+  animation: glow-rotate 4s linear infinite;
+}
+
+.cosmic-glow:hover::before {
+  opacity: 0.7;
+}
+
+@keyframes glow-rotate {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Particle Trail */
+.particle-trail {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.8) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: screen;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .nebula-layer,
+  .floating-orb,
+  .glitch-text::before,
+  .glitch-text::after {
+    animation: none !important;
+  }
+  
+  .cosmic-glow::before {
+    animation: none !important;
+  }
+}
+
 
 .blueprint-mode {
   --blueprint-bg: #0a0a0f;
