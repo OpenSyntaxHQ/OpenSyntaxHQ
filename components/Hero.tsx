@@ -1,12 +1,11 @@
 "use client";
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { gsap } from "@/lib/gsap-config";
 import { useGSAP } from "@gsap/react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Terminal, Sparkles } from "lucide-react";
 import Link from "next/link";
 
-// Register GSAP React plugin
 gsap.registerPlugin(useGSAP);
 
 interface Orb {
@@ -26,52 +25,36 @@ const ORBS: Orb[] = [
   { id: 6, className: "orb-6", baseX: 5, baseY: 40, parallaxStrength: 0.09 },
 ];
 
-// Scramble text characters for glitch effect
-const SCRAMBLE_CHARS = "!<>-_\\/[]{}—=+*^?#________";
+// Title characters
+const TITLE_CHARS = "OpenSyntax".split("");
+const HQ_CHARS = "HQ".split("");
+
+// Animation variants
+type TitleAnimationType = "scatter" | "cinematic";
 
 export function Hero() {
   const [mounted, setMounted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
+  const titleCharsRef = useRef<(HTMLSpanElement | null)[]>([]);
+  const hqCharsRef = useRef<(HTMLSpanElement | null)[]>([]);
   const subtitleRef = useRef<HTMLDivElement>(null);
   const orbsRef = useRef<(HTMLDivElement | null)[]>([]);
   const shatterRef = useRef<HTMLDivElement>(null);
   const nebulaRef = useRef<HTMLDivElement>(null);
-  const masterTimelineRef = useRef<gsap.core.Timeline | null>(null);
+  const scanLineRef = useRef<HTMLDivElement>(null);
+  const titleContainerRef = useRef<HTMLDivElement>(null);
   const mousePos = useRef({ x: 0, y: 0 });
+
+  // Random animation selection
+  const animationType = useMemo<TitleAnimationType>(() => {
+    return Math.random() > 0.5 ? "cinematic" : "scatter";
+  }, []);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Scramble text animation
-  const scrambleText = useCallback((element: HTMLElement, finalText: string, duration: number = 1.5) => {
-    let iteration = 0;
-    const totalIterations = duration * 60;
-    
-    const interval = setInterval(() => {
-      element.innerText = finalText
-        .split("")
-        .map((char, index) => {
-          if (char === " ") return " ";
-          if (index < iteration / (totalIterations / finalText.length)) {
-            return finalText[index];
-          }
-          return SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
-        })
-        .join("");
-
-      if (iteration >= totalIterations) {
-        element.innerText = finalText;
-        clearInterval(interval);
-      }
-      iteration += 1;
-    }, 1000 / 60);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  // Mouse move handler for parallax
+  // Mouse move handler
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!containerRef.current) return;
     
@@ -83,6 +66,7 @@ export function Hero() {
     
     mousePos.current = { x: deltaX, y: deltaY };
 
+    // Parallax orbs
     orbsRef.current.forEach((orb, index) => {
       if (!orb) return;
       const strength = ORBS[index]?.parallaxStrength || 0.1;
@@ -93,15 +77,23 @@ export function Hero() {
         ease: "power2.out",
       });
     });
+
+    // 3D tilt on title - more dramatic effect
+    if (titleContainerRef.current) {
+      gsap.to(titleContainerRef.current, {
+        rotationY: deltaX * 15,
+        rotationX: -deltaY * 10,
+        duration: 0.5,
+        ease: "power2.out",
+      });
+    }
   }, []);
 
-  // Generate shatter fragments
+  // Shatter fragments
   const generateShatterFragments = () => {
     const fragments = [];
-    const cols = 8;
-    const rows = 6;
-    const fragWidth = 100 / cols;
-    const fragHeight = 100 / rows;
+    const cols = 8, rows = 6;
+    const fragWidth = 100 / cols, fragHeight = 100 / rows;
 
     for (let i = 0; i < rows; i++) {
       for (let j = 0; j < cols; j++) {
@@ -123,18 +115,177 @@ export function Hero() {
     return fragments;
   };
 
-  // Master entrance animation
+  // SCATTER Animation - Characters fly in from random positions
+  const animateScatter = (tl: gsap.core.Timeline, titleChars: HTMLSpanElement[], hqChars: HTMLSpanElement[]) => {
+    // Set initial random positions
+    titleChars.forEach((char) => {
+      gsap.set(char, {
+        x: gsap.utils.random(-300, 300),
+        y: gsap.utils.random(-200, 200),
+        rotation: gsap.utils.random(-180, 180),
+        scale: 0,
+        opacity: 0,
+      });
+    });
+    
+    hqChars.forEach((char) => {
+      gsap.set(char, {
+        x: gsap.utils.random(-200, 200),
+        y: gsap.utils.random(-150, 150),
+        rotation: gsap.utils.random(-180, 180),
+        scale: 0,
+        opacity: 0,
+      });
+    });
+
+    // Animate title characters flying in
+    tl.to(titleChars, {
+      x: 0,
+      y: 0,
+      rotation: 0,
+      scale: 1,
+      opacity: 1,
+      duration: 1,
+      stagger: { amount: 0.6, from: "random" },
+      ease: "back.out(1.4)",
+    }, "-=0.5");
+
+    // Animate HQ characters
+    tl.to(hqChars, {
+      x: 0,
+      y: 0,
+      rotation: 0,
+      scale: 1,
+      opacity: 1,
+      duration: 0.8,
+      stagger: { amount: 0.2, from: "start" },
+      ease: "elastic.out(1, 0.5)",
+    }, "-=0.6");
+
+    // Floating wave effect
+    tl.add(() => {
+      titleChars.forEach((char, i) => {
+        gsap.to(char, {
+          y: "random(-3, 3)",
+          duration: "random(2, 3)",
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          delay: i * 0.05,
+        });
+      });
+      hqChars.forEach((char, i) => {
+        gsap.to(char, {
+          y: "random(-4, 4)",
+          duration: "random(1.5, 2.5)",
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          delay: i * 0.1,
+        });
+      });
+    }, "+=0.2");
+  };
+
+  // CINEMATIC Animation - 3D flip with scanning line
+  const animateCinematic = (tl: gsap.core.Timeline, titleChars: HTMLSpanElement[], hqChars: HTMLSpanElement[], allChars: HTMLSpanElement[]) => {
+    // Set initial state - characters hidden in 3D space
+    allChars.forEach((char) => {
+      gsap.set(char, {
+        opacity: 0,
+        scale: 0,
+        z: -1000,
+        rotationX: gsap.utils.random(-90, 90),
+        rotationY: gsap.utils.random(-180, 180),
+        filter: "blur(20px)",
+      });
+    });
+
+    // Scanning line reveal
+    tl.set(scanLineRef.current, { opacity: 1, left: "0%" });
+    tl.to(scanLineRef.current, {
+      left: "100%",
+      duration: 1.2,
+      ease: "power2.inOut",
+    }, "-=0.3");
+
+    // Characters flip in with 3D rotation
+    titleChars.forEach((char, i) => {
+      tl.to(char, {
+        opacity: 1,
+        scale: 1,
+        z: 0,
+        rotationX: 0,
+        rotationY: 0,
+        filter: "blur(0px)",
+        duration: 0.8,
+        ease: "back.out(1.7)",
+      }, `-=1.0`);
+    });
+
+    // HQ with explosive entrance
+    tl.to(hqChars, {
+      opacity: 1,
+      scale: 1,
+      z: 0,
+      rotationX: 0,
+      rotationY: 0,
+      filter: "blur(0px)",
+      duration: 0.6,
+      stagger: 0.1,
+      ease: "elastic.out(1.2, 0.5)",
+    }, "-=0.4");
+
+    // Hide scan line
+    tl.to(scanLineRef.current, { opacity: 0, duration: 0.3 }, "-=0.2");
+
+    // Glow pulse wave
+    tl.add(() => {
+      allChars.forEach((char, i) => {
+        gsap.to(char, {
+          textShadow: "0 0 60px rgba(16, 185, 129, 1), 0 0 120px rgba(16, 185, 129, 0.8)",
+          duration: 0.3,
+          delay: i * 0.05,
+          yoyo: true,
+          repeat: 1,
+          ease: "power2.inOut",
+        });
+      });
+    }, "-=0.2");
+
+    // Continuous animations
+    tl.add(() => {
+      allChars.forEach((char, i) => {
+        gsap.to(char, {
+          y: "random(-2, 2)",
+          rotationZ: "random(-1, 1)",
+          duration: "random(2, 4)",
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          delay: i * 0.02,
+        });
+      });
+      gsap.to(hqChars, {
+        textShadow: "0 0 40px rgba(16, 185, 129, 0.8)",
+        duration: 2,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+      });
+    }, "+=0.3");
+  };
+
+  // Master animation
   useGSAP(() => {
     if (!mounted || !containerRef.current) return;
 
     const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-    masterTimelineRef.current = tl;
 
-    // Phase 1: Reality Shatter (fragments fly away)
+    // Phase 1: Shatter
     const fragments = shatterRef.current?.querySelectorAll(".shatter-fragment");
     if (fragments && fragments.length > 0) {
       tl.set(fragments, { opacity: 1 });
-      
       tl.to(fragments, {
         x: () => gsap.utils.random(-600, 600),
         y: () => gsap.utils.random(-600, 600),
@@ -149,81 +300,54 @@ export function Hero() {
       }, "+=0.1");
     }
 
-    // Phase 2: Nebula fade in
-    tl.to(nebulaRef.current, {
-      opacity: 1,
-      duration: 1.5,
-      ease: "power2.inOut",
-    }, "-=0.8");
+    // Phase 2: Nebula
+    tl.to(nebulaRef.current, { opacity: 1, duration: 1.5, ease: "power2.inOut" }, "-=0.8");
 
-    // Phase 3: Orbs entrance with elastic bounce
+    // Phase 3: Orbs
     tl.from(orbsRef.current.filter(Boolean), {
-      scale: 0,
-      opacity: 0,
-      duration: 1.2,
-      stagger: 0.1,
-      ease: "elastic.out(1, 0.5)",
+      scale: 0, opacity: 0, duration: 1.2, stagger: 0.1, ease: "elastic.out(1, 0.5)",
     }, "-=1");
 
-    // Phase 4: Title with scramble effect
-    if (titleRef.current) {
-      const titleSpan = titleRef.current.querySelector(".title-main");
-      const hqSpan = titleRef.current.querySelector(".title-hq");
-      
-      tl.from(titleRef.current, {
-        y: 60,
-        opacity: 0,
-        duration: 0.8,
-      }, "-=0.5");
+    // Phase 4: Title Animation (RANDOM SELECTION)
+    const titleChars = titleCharsRef.current.filter(Boolean) as HTMLSpanElement[];
+    const hqChars = hqCharsRef.current.filter(Boolean) as HTMLSpanElement[];
+    const allChars = [...titleChars, ...hqChars];
 
-      if (titleSpan instanceof HTMLElement) {
-        tl.add(() => { scrambleText(titleSpan, "OpenSyntax", 1.2); }, "-=0.3");
-      }
-      if (hqSpan instanceof HTMLElement) {
-        tl.add(() => { scrambleText(hqSpan, "HQ", 0.8); }, "-=1");
-      }
+    if (animationType === "scatter") {
+      animateScatter(tl, titleChars, hqChars);
+    } else {
+      animateCinematic(tl, titleChars, hqChars, allChars);
     }
 
-    // Phase 5: Badge entrance
-    tl.from(".hero-badge", {
-      y: 30,
-      opacity: 0,
-      scale: 0.8,
-      duration: 0.6,
-      ease: "back.out(1.7)",
-    }, "-=0.8");
+    // Phase 5: Badge
+    tl.from(".hero-badge", { y: 30, opacity: 0, scale: 0.8, duration: 0.6, ease: "back.out(1.7)" }, "-=2");
 
-    // Phase 6: Subtitle word-by-word reveal
+    // Phase 6: Subtitle
     if (subtitleRef.current) {
       const words = subtitleRef.current.querySelectorAll(".subtitle-word");
-      tl.from(words, {
-        y: 40,
-        opacity: 0,
-        filter: "blur(10px)",
-        duration: 0.6,
-        stagger: 0.05,
-        ease: "power2.out",
-      }, "-=0.4");
+      tl.from(words, { y: 40, opacity: 0, filter: "blur(10px)", duration: 0.6, stagger: 0.03, ease: "power2.out" }, "-=1.5");
     }
 
-    // Phase 7: CTA buttons
-    tl.from(".hero-cta-container", { y: 40, opacity: 0, duration: 0.8 }, "-=0.3");
-    tl.from(".cta-btn", { scale: 0.8, opacity: 0, duration: 0.5, stagger: 0.15, ease: "back.out(2)" }, "-=0.4");
+    // Phase 7: CTAs
+    tl.from(".hero-cta-container", { y: 40, opacity: 0, duration: 0.8 }, "-=1");
+    tl.from(".cta-btn", { scale: 0.8, opacity: 0, duration: 0.5, stagger: 0.15, ease: "back.out(2)" }, "-=0.5");
 
-    // Cleanup shatter container after animation
+    // Cleanup shatter
     tl.set(shatterRef.current, { display: "none" }, "+=0.2");
 
-    // Start mouse tracking after entrance
+    // Mouse tracking
     tl.add(() => window.addEventListener("mousemove", handleMouseMove));
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       tl.kill();
     };
-  }, { scope: containerRef, dependencies: [mounted] });
+  }, { scope: containerRef, dependencies: [mounted, animationType] });
 
-  // Subtitle words for animation
-  const subtitleWords = "Building practical, well-documented tools and reference implementations that make software systems easier to design, ship, and maintain.".split(" ");
+  // Subtitle words
+  const subtitleWords = useMemo(() => 
+    "Building practical, well-documented tools and reference implementations that make software systems easier to design, ship, and maintain.".split(" "),
+  []);
 
   if (!mounted) {
     return (
@@ -238,7 +362,7 @@ export function Hero() {
             <span>OpenSyntax</span><span className="text-primary">HQ</span>
           </h1>
           <div className="md:text-xl text-base max-w-2xl mx-auto leading-relaxed">
-            Building practical, well-documented tools and reference implementations that make software systems easier to design, ship, and maintain.
+            Building practical, well-documented tools and reference implementations.
           </div>
           <div className="flex items-center justify-center gap-4 pt-6">
             <div className="h-12 w-44 rounded-full" />
@@ -284,15 +408,41 @@ export function Hero() {
           <Sparkles className="w-3 h-3 text-primary animate-pulse" />
         </div>
 
-        {/* Title */}
-        <h1
-          ref={titleRef}
-          className="md:text-7xl text-4xl lg:text-8xl font-bold text-center text-foreground relative z-20 tracking-tight glitch-text"
-          data-text="OpenSyntaxHQ"
-        >
-          <span className="title-main">OpenSyntax</span>
-          <span className="title-hq text-primary">HQ</span>
-        </h1>
+        {/* Title with character animation */}
+        <div ref={titleContainerRef} className="title-3d-container relative" style={{ perspective: "1000px" }}>
+          {/* Scanning Line (for cinematic mode) */}
+          <div
+            ref={scanLineRef}
+            className="absolute top-0 bottom-0 w-1 opacity-0 pointer-events-none z-30"
+            style={{
+              background: "linear-gradient(to bottom, transparent, rgba(16, 185, 129, 1), rgba(16, 185, 129, 1), transparent)",
+              boxShadow: "0 0 30px 10px rgba(16, 185, 129, 0.8), 0 0 60px 20px rgba(16, 185, 129, 0.4)",
+            }}
+          />
+          
+          <h1 className="md:text-7xl text-4xl lg:text-8xl font-bold text-center text-foreground relative z-20 tracking-tight" style={{ transformStyle: "preserve-3d" }}>
+            {TITLE_CHARS.map((char, index) => (
+              <span
+                key={index}
+                ref={(el) => { titleCharsRef.current[index] = el; }}
+                className="title-char inline-block"
+                style={{ display: 'inline-block', transformStyle: "preserve-3d" }}
+              >
+                {char}
+              </span>
+            ))}
+            {HQ_CHARS.map((char, index) => (
+              <span
+                key={`hq-${index}`}
+                ref={(el) => { hqCharsRef.current[index] = el; }}
+                className="title-char hq-char inline-block text-primary"
+                style={{ display: 'inline-block', transformStyle: "preserve-3d" }}
+              >
+                {char}
+              </span>
+            ))}
+          </h1>
+        </div>
 
         {/* Subtitle */}
         <div ref={subtitleRef} className="text-muted-foreground md:text-xl text-base max-w-2xl mx-auto relative z-20 leading-relaxed">

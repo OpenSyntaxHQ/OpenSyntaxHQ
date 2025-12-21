@@ -408,6 +408,29 @@
   box-shadow: inset 0 0 20px rgba(16, 185, 129, 0.05);
 }
 
+/* Title Character Animation */
+.title-container {
+  perspective: 1000px;
+}
+
+.title-char {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transition: text-shadow 0.3s ease;
+}
+
+.title-char:hover {
+  text-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+}
+
+.hq-char {
+  text-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+}
+
+.hq-char:hover {
+  text-shadow: 0 0 40px rgba(16, 185, 129, 0.8);
+}
+
 /* Glitch Text Effect */
 .glitch-text {
   position: relative;
